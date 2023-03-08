@@ -88,7 +88,7 @@ Wn=Wn(1:Kn);%非规则槽线的宽度
 %     Dt_1(k)=A_T_1(2,2);
 % end
 
-error_best=compute_error(Cn_best);
+error_best=compute_error(Cn_best');
 %  error_best=f_error(A_T_1,A_N_1,M);
 % figure(2)
 % plot(x_t,W,'r',x_n,Wn,'b');

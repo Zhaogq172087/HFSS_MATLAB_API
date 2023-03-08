@@ -3,6 +3,7 @@
 clear all; 
 clc;
 addpath 'D:\soft\malab2020\bin\hfss_matlab_vbs_array16_edge'
+
 %  rehash toolboxcache
  global F M Lt delta_f c Wmin Wmax Wmin_n a_t Kt Kn sigma_effs h sigma x_t  y_t Cn_K   a Ln
 
@@ -108,7 +109,7 @@ end
 %% 将选择好的最优曲线送下来,API是用来生成脚本的
 API_exp(Lt);
 i=0;
-for i=1:Q_1
+for i=1:2
     API_last(i,Cn_K(i,:));%每循环一次，就可以生成一个编号为Q的脚本，但是每次需要有一个基础的指数曲线脚本，编号为0.
 end
 

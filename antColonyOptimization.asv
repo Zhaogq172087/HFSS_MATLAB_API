@@ -1,0 +1,90 @@
+function [bestSolution, bestFitness] = antColonyOptimization(fitnessFunc, nVariables, options)
+
+% Initialize default options
+defaultOptions = struct('ColonySize', 20, 'MaxIterations', 100, 'Alpha', 1, 'Beta', 5, 'Rho', 0.1, 'Q', 1, 'InitialPheromone', 0.01, 'Display', 'off');
+
+% Merge user-specified options with default options
+if nargin < 3
+    options = struct();
+end
+options = mergeOptions(defaultOptions, options);
+
+% Initialize pheromone matrix
+pheromone = ones(nVariables, options.ColonySize) * options.InitialPheromone;
+
+% Initialize best solution
+bestSolution = rand(1, nVariables);
+bestFitness = fitnessFunc(bestSolution);
+
+% Initialize ant colony
+for iteration = 1:options.MaxIterations
+    
+    % Initialize ant solutions
+    solutions = zeros(options.ColonySize, nVariables);
+    fitnesses = zeros(options.ColonySize, 1);
+    
+    % Generate ant solutions
+    for ant = 1:options.ColonySize
+        
+        % Initialize ant starting position
+        currentPosition = rand(1, nVariables);
+        solution = currentPosition;
+        
+        % Traverse solution space
+        for variable = 1:nVariables
+            
+            % Compute probabilities for next variable
+            unvisitedVariables = ~ismember(1:nVariables, find(solution));
+            probabilities = pheromone(variable, unvisitedVariables).^options.Alpha .* (1./fitnessFunc(currentPosition)).^options.Beta;
+            probabilities(~unvisitedVariables) = 0;
+            probabilities = probabilities / sum(probabilities);
+            
+            % Choose next variable based on probabilities
+            nextVariable = randsample(find(unvisitedVariables), 1, true, probabilities);
+            
+            % Update ant position
+            currentPosition(nextVariable) = rand();
+            solution(nextVariable) = currentPosition(nextVariable);
+            
+        end
+        
+        % Evaluate ant solution
+        solutions(ant, :) = solution;
+        fitnesses(ant) = fitnessFunc(solution);
+        
+        % Update best solution
+        if fitnesses(ant) < bestFitness
+            bestSolution = solution;
+            bestFitness = fitnesses(ant);
+        end
+        
+    end
+    
+    % Update pheromone matrix
+    deltaPheromone = zeros(nVariables, options.ColonySize);
+    for ant = 1:options.ColonySize
+        for variable = 1:nVariables
+            deltaPheromone(variable, ant) = options.Q * fitnesses(ant) / sum(fitnesses) * solutions(ant, variable);
+        end
+    end
+    pheromone = (1 - options.Rho) * pheromone + deltaPheromone;
+    
+    % Display current iteration
+    if strcmp(options.Display, 'on')
+        disp(['Iteration ', num2str(iteration), ', Best Fitness: ', num2str(bestFitness)]);
+    end
+    
+end
+
+end
+
+function options = mergeOptions(defaultOptions, userOptions)
+% Merges user-specified options with default options
+options = defaultOptions;
+if ~isempty(userOptions)
+    optionNames = fieldnames(userOptions);
+    for i = 1:numel(optionNames)
+        options.(optionNames{i}) = userOptions.(optionNames{i});
+    end
+end
+end

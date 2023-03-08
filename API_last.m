@@ -24,7 +24,7 @@ core(2,1)=Cn(1,13);      %基板的长度
 % core(4,1)=max(Lt,Ln);     %指数基板的长度
 
 
-fileName = ['Vivaldi_', num2str(i)];
+fileName = ['Vivaldi_', num2str(i+6)];
 temScriptFile=['D:\soft\malab2020\bin\hfss_matlab_vbs_array16_edge\',fileName,'.vbs'];
 fid=fopen(temScriptFile,'wt');  %fid为函数句柄，打开临时脚本文件给句柄，'wt'表示以文本模式打开文件，可写，覆盖原有内容
 fprintf(fid, 'Set oAnsoftApp = CreateObject("Ansoft.ElectronicsDesktop")\n');
